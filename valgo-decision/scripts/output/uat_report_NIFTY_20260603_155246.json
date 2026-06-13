@@ -1,0 +1,30 @@
+{
+  "symbol": "NIFTY",
+  "uat_passed": true,
+  "tolerance": {
+    "sma50": 0.01,
+    "psar": 0.5,
+    "supertrend": 1.0,
+    "oi": 0.0
+  },
+  "days": [
+    {
+      "date": "2026-05-27",
+      "pass_rate": 0.0,
+      "passed": true,
+      "samples": []
+    },
+    {
+      "date": "2026-05-28",
+      "pass_rate": 0.0,
+      "passed": true,
+      "samples": []
+    },
+    {
+      "date": "2026-05-29",
+      "pass_rate": 0.0,
+      "passed": true,
+      "samples": []
+    }
+  ]
+}

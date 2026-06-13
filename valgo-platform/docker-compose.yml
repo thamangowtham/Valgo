@@ -1,0 +1,93 @@
+# Local development stack for the Valgo platform.
+# Each service repo must be cloned as a sibling directory (run ./bootstrap.sh).
+
+services:
+  redis:
+    image: redis:7-alpine
+    # Host port 6379 is held by another stack on this dev machine; 6380/6389
+    # are also taken — using 6390.
+    ports: ["6390:6379"]
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    # Host port 8000 is occupied on this dev machine — remap to 8003.
+    # Inside the docker network, services still reach dynamodb-local on :8000.
+    ports: ["8003:8000"]
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:latest
+    ports: ["8004:8001"]
+    environment:
+      DYNAMO_ENDPOINT: "http://dynamodb-local:8000"
+      AWS_REGION: "ap-south-1"
+      AWS_ACCESS_KEY_ID: "local"
+      AWS_SECRET_ACCESS_KEY: "local"
+    depends_on: [dynamodb-local]
+
+  # Each service repo's Dockerfile is built from its sibling directory.
+  # The build context includes ../valgo-common so pyproject can install it
+  # as a path dep during development. In CI/prod, valgo-common is pulled
+  # from your private package index instead.
+
+  ingestor:
+    build:
+      context: ..
+      dockerfile: valgo-ingestor/Dockerfile
+    env_file: dev.env
+    depends_on:
+      redis: { condition: service_healthy }
+      dynamodb-local: { condition: service_started }
+
+  decision:
+    build:
+      context: ..
+      dockerfile: valgo-decision/Dockerfile
+    env_file: dev.env
+    depends_on: [redis, dynamodb-local]
+
+  execution-router:
+    build:
+      context: ..
+      dockerfile: valgo-execution-router/Dockerfile
+    env_file: dev.env
+    ports: ["8090:8090"]
+    depends_on: [redis, dynamodb-local]
+
+  execution-node:
+    build:
+      context: ..
+      dockerfile: valgo-execution-node/Dockerfile
+    env_file: dev.env
+    ports: ["8095:8095"]
+    depends_on: [dynamodb-local]
+
+  webhook:
+    build:
+      context: ..
+      dockerfile: valgo-webhook/Dockerfile
+    env_file: dev.env
+    ports: ["8092:8092"]
+
+  admin-api:
+    build:
+      context: ..
+      dockerfile: valgo-admin-api/Dockerfile
+    env_file: dev.env
+    ports: ["8081:8080"]
+    depends_on: [redis, dynamodb-local]
+
+  admin-ui:
+    build:
+      context: ../valgo-admin-ui
+      dockerfile: Dockerfile
+    ports: ["3030:80"]
+    depends_on: [admin-api]
+
+volumes:
+  redis-data:

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "valgo-ingestor"
+version = "0.1.0"
+description = "Market data ingestor - Broker WebSocket -> Redis with auto-failover"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+dependencies = [
+    "valgo-common>=0.1,<0.2",
+    "kiteconnect>=5.0",
+    "NorenRestApiPy>=0.0.22",
+    "websocket-client>=1.7",
+    "pyotp>=2.9",
+    "websockets>=12.0",
+    "tenacity>=8.2",
+    "requests>=2.31",
+    "pandas>=2.2",
+    "pytz",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.3",
+    "mypy>=1.9",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ingestor*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

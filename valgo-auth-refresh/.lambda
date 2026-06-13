@@ -1,0 +1,2 @@
+This service deploys as a Lambda zip, not a container.
+Build with: ./scripts/package.sh

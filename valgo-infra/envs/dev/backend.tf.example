@@ -1,0 +1,11 @@
+# Rename to backend.tf and customize before init.
+# Recommended: put state in S3 with DynamoDB locking.
+terraform {
+  backend "s3" {
+    bucket         = "valgo-tf-state-CHANGE-ME"
+    key            = "dev/terraform.tfstate"
+    region         = "ap-south-1"
+    dynamodb_table = "valgo-tf-locks"
+    encrypt        = true
+  }
+}

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "valgo-admin-api"
+version = "0.1.0"
+description = "FastAPI backend for the Valgo admin panel"
+requires-python = ">=3.11"
+dependencies = [
+    "valgo-common>=0.1,<0.2",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "ruff>=0.3"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["admin_api*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
