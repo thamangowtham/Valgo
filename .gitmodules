@@ -1,0 +1,3 @@
+[submodule "valgo-decision"]
+	path = valgo-decision
+	url = https://github.com/thamangowtham/valgo-decision.git
