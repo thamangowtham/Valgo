@@ -171,8 +171,25 @@ class STPSARConfluenceStrategy(StrategyBase):
     # ── Historical preload ────────────────────────────────────────────────────
 
     async def preload_history(self) -> None:
-        """Fetch last 250 closed 5-min candles from Kite API for every symbol."""
-        if not settings.kite_api_key or not settings.kite_access_token:
+        """Fetch last 250 closed 5-min candles from Kite API for every symbol.
+
+        Auth priority:
+          1. enctoken  → kite.zerodha.com/oms  (browser session, no subscription)
+          2. api_key + access_token → api.kite.trade (Kite Connect subscription)
+        """
+        if settings.kite_enctoken:
+            base_url = "https://kite.zerodha.com/oms"
+            headers  = {
+                "Authorization": f"enctoken {settings.kite_enctoken}",
+                "X-Kite-Version": "3",
+            }
+        elif settings.kite_api_key and settings.kite_access_token:
+            base_url = "https://api.kite.trade"
+            headers  = {
+                "Authorization": f"token {settings.kite_api_key}:{settings.kite_access_token}",
+                "X-Kite-Version": "3",
+            }
+        else:
             log.warning("st_psar.preload_skipped", reason="no Kite credentials")
             return
 
@@ -180,10 +197,6 @@ class STPSARConfluenceStrategy(StrategyBase):
         # Fetch 7 calendar days to cover ~4 trading days (250 bars × 5 min = ~20.8 hrs)
         from_dt = (now_ist - timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
         to_dt   = now_ist.strftime("%Y-%m-%d %H:%M:%S")
-        headers = {
-            "Authorization": f"token {settings.kite_api_key}:{settings.kite_access_token}",
-            "X-Kite-Version": "3",
-        }
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             for sym, state in self._states.items():
@@ -191,7 +204,7 @@ class STPSARConfluenceStrategy(StrategyBase):
                 if token is None:
                     log.warning("st_psar.preload_no_token", symbol=sym)
                     continue
-                url = f"https://api.kite.trade/instruments/historical/{token}/5minute"
+                url = f"{base_url}/instruments/historical/{token}/5minute"
                 try:
                     resp = await client.get(url, headers=headers,
                                             params={"from": from_dt, "to": to_dt,

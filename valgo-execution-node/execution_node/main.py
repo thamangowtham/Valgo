@@ -38,14 +38,12 @@ async def lifespan(app: FastAPI):
         yield
         return
 
-    adapter = ShoonyaBrokerAdapter()
-    if not settings.shoonya_access_token:
-        log.error("node.missing_access_token",
-                  hint="Run: python scripts/test_shoonya.py --open, get code, then --code CODE")
-    else:
-        broker = adapter
-        log.info("node.broker_ready", broker="shoonya",
-                 user=settings.shoonya_user_id)
+    try:
+        broker = ShoonyaBrokerAdapter()
+        log.info("node.broker_ready", broker="shoonya", user=settings.shoonya_user_id)
+    except Exception as e:
+        log.error("node.broker_init_failed", error=str(e),
+                  hint="Run: python scripts/shoonya_login.py --open, then --code CODE")
 
     yield
     log.info("node.shutting_down")

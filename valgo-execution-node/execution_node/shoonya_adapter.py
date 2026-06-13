@@ -59,6 +59,15 @@ class _ShoonyaApi(NorenApi):
     def __init__(self):
         super().__init__(host=HOST_URL, websocket=WS_URL)
 
+    def injectOAuthHeader(self, access_token: str, user_id: str, account_id: str) -> None:
+        """Set a saved OAuth access token so API calls work without re-logging in.
+        NorenRestApiPy stores the session token as self.susertoken (used as jKey
+        in every request payload). uid / actid are needed by order/position calls.
+        """
+        self.susertoken = access_token
+        self.uid        = user_id
+        self.actid      = account_id or user_id
+
 
 # ── Token helpers ─────────────────────────────────────────────────────────────
 

@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 import requests
 
 # ── paste fresh enctoken here ──────────────────────────────────────
-ENCTOKEN = "enKqtIMWvS6la/1SE0rHYqMnUBFoAjlPpdmWv4CZtwOHv/+REub570UKTKmxDwIY6B9FMgyXtsiiM3SmhJ6yYL6vl6i725pO2QvhI4ItVfiTNDRQVlbSOA=="
+ENCTOKEN = "PASTE_FRESH_ENCTOKEN_HERE"  # kite.zerodha.com -> F12 -> Application -> Cookies -> enctoken
 # ──────────────────────────────────────────────────────────────────
 
 OMS_BASE = "https://kite.zerodha.com/oms"

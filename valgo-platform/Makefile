@@ -10,22 +10,22 @@ help:
 	@echo "  make logs         Tail logs from all services"
 	@echo "  make build        Rebuild all images"
 	@echo "  make test-all     Run pytest in every Python repo"
-	@echo "  make clean        docker compose down -v + prune build cache"
+	@echo "  make clean        docker-compose down -v + prune build cache"
 
 bootstrap:
 	@./bootstrap.sh
 
 up:
-	@docker compose up -d
+	@docker-compose up -d
 
 down:
-	@docker compose down
+	@docker-compose down
 
 logs:
-	@docker compose logs -f --tail=100
+	@docker-compose logs -f --tail=100
 
 build:
-	@docker compose build
+	@docker-compose build
 
 init-ddb:
 	@python3 scripts/init-ddb.py
@@ -39,5 +39,5 @@ test-all:
 	done
 
 clean:
-	@docker compose down -v
+	@docker-compose down -v
 	@docker builder prune -f

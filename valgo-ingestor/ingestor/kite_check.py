@@ -17,7 +17,7 @@ if hasattr(sys.stdout, "reconfigure"):
 import requests
 
 # ── Paste fresh values here each day (from F12 → Application → Cookies) ──
-ENCTOKEN = "enKqtIMWvS6la/1SE0rHYqMnUBFoAjlPpdmWv4CZtwOHv/+REub570UKTKmxDwIY6B9FMgyXtsiiM3SmhJ6yYL6vl6i725pO2QvhI4ItVfiTNDRQVlbSOA=="
+ENCTOKEN = "PASTE_FRESH_ENCTOKEN_HERE"  # kite.zerodha.com -> F12 -> Application -> Cookies -> enctoken
 # ──────────────────────────────────────────────────────────────────────────
 
 OMS_BASE = "https://kite.zerodha.com/oms"   # fixed: was zeraodha
